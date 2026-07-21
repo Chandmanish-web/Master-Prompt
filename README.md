@@ -85,3 +85,32 @@ The project currently includes:
 ## Notes
 
 This project is still evolving, and future phases will add the full attendance, task, leave, report, and notification modules.
+
+## Progress Log (automated)
+
+- Date: 2026-07-21
+- Server tests: ran `npm test` in `server` — 3 tests passed (see `server/tests/`).
+- Git: performed initial local commit (`first commit`) with 24 files added/changed.
+- Remote push: attempted push to `https://github.com/Chandmanish-web/Master-Prompt.git` but failed with HTTP 403 (permission denied). The repository accepts pushes only from authorized GitHub accounts or via authenticated methods (PAT or SSH key).
+
+Next steps to finish push:
+
+- Option A (recommended): Create a GitHub Personal Access Token (PAT) and use HTTPS push. Then run:
+
+```powershell
+cd "C:\Users\Lenovo\OneDrive\Desktop\Master Prompt"
+git push -u origin main
+```
+
+- Option B: Configure SSH keys and switch remote to SSH, then push:
+
+```powershell
+ssh-keygen -t ed25519 -C "your_email@example.com"
+ssh-agent -s
+ssh-add $env:USERPROFILE\\.ssh\\id_ed25519
+# copy id_ed25519.pub to GitHub > Settings > SSH and GPG keys
+git remote set-url origin git@github.com:Chandmanish-web/Master-Prompt.git
+git push -u origin main
+```
+
+If you want, I can help generate the SSH key, configure it on GitHub, or retry the push after you provide credentials.
