@@ -131,3 +131,26 @@ exports.getMe = async (req, res) => {
     });
   }
 };
+
+exports.getTeamMembers = async (req, res) => {
+  try {
+    const currentUser = await User.findById(req.user.id).select('role managerId');
+
+    let members = [];
+
+    if (currentUser.role === 'admin') {
+      members = await User.find({ role: { $ne: 'admin' } }).select('-password').sort({ name: 1 });
+    } else if (currentUser.role === 'manager') {
+      members = await User.find({
+        _id: { $ne: currentUser._id },
+        $or: [{ managerId: currentUser._id }, { managerId: null }],
+      })
+        .select('-password')
+        .sort({ name: 1 });
+    }
+
+    res.status(200).json({ success: true, members });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message || 'Unable to fetch team members' });
+  }
+};
