@@ -42,70 +42,71 @@ const seed = async () => {
     });
 
     const manager = await User.create({
-      name: 'Manager One',
-      email: 'manager@worktrack.com',
+      name: 'Pranav Manager',
+      email: 'pranav@worktrack.com',
       password: 'password123',
       role: 'manager',
     });
 
-    const employees = await Promise.all([
-      User.create({
-        name: 'Employee One',
-        email: 'employee1@worktrack.com',
+    const employeeData = [];
+    for (let i = 1; i <= 100; i += 1) {
+      employeeData.push({
+        name: `Employee ${i}`,
+        email: `employee${i}@worktrack.com`,
         password: 'password123',
         role: 'employee',
         managerId: manager._id,
-      }),
-      User.create({
-        name: 'Employee Two',
-        email: 'employee2@worktrack.com',
-        password: 'password123',
-        role: 'employee',
-        managerId: manager._id,
-      }),
-      User.create({
-        name: 'Employee Three',
-        email: 'employee3@worktrack.com',
-        password: 'password123',
-        role: 'employee',
-        managerId: manager._id,
-      }),
-    ]);
+      });
+    }
 
-    const tasks = await Task.create([
-      {
-        title: 'Prepare launch checklist',
-        description: 'Draft the rollout checklist for the upcoming release.',
-        assignedTo: employees[0]._id,
-        assignedBy: manager._id,
-        deadline: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
-        priority: 'High',
-        status: 'Assigned',
-      },
-      {
-        title: 'Review customer feedback',
-        description: 'Summarize top issues and share recommended fixes.',
-        assignedTo: employees[1]._id,
-        assignedBy: manager._id,
-        deadline: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000),
-        priority: 'Medium',
-        status: 'In Progress',
-      },
-      {
-        title: 'Submit monthly report',
-        description: 'Upload the report and include supporting notes.',
-        assignedTo: employees[2]._id,
-        assignedBy: manager._id,
-        deadline: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-        priority: 'Low',
-        status: 'Submitted',
-        submission: {
-          text: 'Monthly report attached and shared with the team.',
-          fileUrl: 'https://example.com/report.pdf',
-          submittedAt: new Date(),
-        },
-      },
-    ]);
+    const employees = await User.insertMany(employeeData);
+
+    const priorities = ['Low', 'Medium', 'High'];
+    const statuses = ['Assigned', 'In Progress', 'Submitted', 'Reviewed'];
+    const taskTemplates = [
+      'Complete the weekly status report and upload it to the team drive.',
+      'Review the client onboarding checklist and confirm any missing items.',
+      'Update the project documentation with the latest feature details.',
+      'Follow up on open tickets and provide status updates by end of day.',
+      'Prepare a short summary of current blockers for the next stand-up.',
+    ];
+
+    const tasks = await Task.create(
+      employees.map((employee, index) => {
+        const template = taskTemplates[index % taskTemplates.length];
+        const status = statuses[index % statuses.length];
+        const priority = priorities[index % priorities.length];
+        const deadline = new Date(Date.now() + (3 + (index % 14)) * 24 * 60 * 60 * 1000);
+
+        const task = {
+          title: `Task ${index + 1} assigned by Pranav`,
+          description: template,
+          assignedTo: employee._id,
+          assignedBy: manager._id,
+          deadline,
+          priority,
+          status,
+        };
+
+        if (status === 'Submitted') {
+          task.submission = {
+            text: 'Completed work uploaded for review.',
+            fileUrl: `https://example.com/submission-${index + 1}.pdf`,
+            submittedAt: new Date(),
+          };
+        }
+
+        if (status === 'Reviewed') {
+          task.review = {
+            rating: (index % 5) + 1,
+            feedback: 'Review completed, the work is satisfactory.',
+            reviewedAt: new Date(),
+          };
+        }
+
+        return task;
+      })
+    );
 
     const attendanceDates = [0, -1, -2, -3];
     const attendanceRecords = [];

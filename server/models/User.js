@@ -27,6 +27,10 @@ const userSchema = new mongoose.Schema(
       required: [true, 'Role is required'],
       default: 'employee',
     },
+    leaveBalance: {
+      type: Number,
+      default: 18,
+    },
     department: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Department',

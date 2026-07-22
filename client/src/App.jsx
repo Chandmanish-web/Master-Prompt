@@ -3,6 +3,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import LandingPage from './pages/LandingPage';
+import About from './pages/About';
 import AdminDashboard from './pages/AdminDashboard';
 import ManagerDashboard from './pages/ManagerDashboard';
 import EmployeeDashboard from './pages/EmployeeDashboard';
@@ -30,6 +32,8 @@ function App() {
 
   return (
     <Routes>
+      <Route path="/" element={<LandingPage />} />
+      <Route path="/about" element={<About />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
 
@@ -48,8 +52,6 @@ function App() {
       <Route element={<PrivateRoute allowedRoles={['admin', 'manager', 'employee']} />}>
         <Route path="/chat" element={<Chat />} />
       </Route>
-
-      <Route path="/" element={<Navigate to="/login" replace />} />
     </Routes>
   );
 }

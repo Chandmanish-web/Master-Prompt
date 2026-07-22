@@ -6,6 +6,7 @@ const authRoutes = require('./routes/authRoutes');
 const chatRoutes = require('./routes/chatRoutes');
 const attendanceRoutes = require('./routes/attendanceRoutes');
 const taskRoutes = require('./routes/taskRoutes');
+const leaveRoutes = require('./routes/leaveRoutes');
 const { startAbsentJob } = require('./cron/markAbsent');
 
 dotenv.config();
@@ -30,6 +31,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/chats', chatRoutes);
 app.use('/api/attendance', attendanceRoutes);
 app.use('/api/tasks', taskRoutes);
+app.use('/api/leaves', leaveRoutes);
 
 const startServer = async () => {
   try {
