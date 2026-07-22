@@ -3,6 +3,7 @@ import authReducer from './authSlice';
 import chatReducer from './chatSlice';
 import attendanceReducer from './attendanceSlice';
 import taskReducer from './taskSlice';
+import leaveReducer from './leaveSlice';
 
 const store = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ const store = configureStore({
     chat: chatReducer,
     attendance: attendanceReducer,
     tasks: taskReducer,
+    leave: leaveReducer,
   },
 });
 

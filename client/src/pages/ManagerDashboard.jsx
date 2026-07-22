@@ -4,6 +4,7 @@ import Navbar from '../components/Navbar';
 import AttendanceCalendar from '../components/AttendanceCalendar';
 import { getAttendanceReport } from '../redux/attendanceSlice';
 import { createTask, getTeamMembers, getTeamTasks, reviewTask } from '../redux/taskSlice';
+import { getPendingLeaves, getMyLeaves, updateLeaveStatus } from '../redux/leaveSlice';
 
 const statusColumns = ['Assigned', 'In Progress', 'Submitted', 'Reviewed'];
 
@@ -12,6 +13,7 @@ const ManagerDashboard = () => {
   const { user } = useSelector((state) => state.auth);
   const { report } = useSelector((state) => state.attendance);
   const { teamTasks, teamMembers, loading, error } = useSelector((state) => state.tasks);
+  const { pendingLeaves, loading: leaveLoading, error: leaveError } = useSelector((state) => state.leave);
   const monthKey = `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}`;
   const [form, setForm] = useState({ title: '', description: '', assignedTo: '', deadline: '', priority: 'Medium' });
   const [reviewModalOpen, setReviewModalOpen] = useState(false);
@@ -22,6 +24,7 @@ const ManagerDashboard = () => {
     dispatch(getAttendanceReport({ month: monthKey }));
     dispatch(getTeamTasks());
     dispatch(getTeamMembers());
+    dispatch(getPendingLeaves());
   }, [dispatch]);
 
   const groupedTasks = useMemo(() => {
@@ -58,6 +61,14 @@ const ManagerDashboard = () => {
       setReviewModalOpen(false);
       setSelectedTask(null);
       dispatch(getTeamTasks());
+    }
+  };
+
+  const handleLeaveAction = async (leaveId, status) => {
+    const result = await dispatch(updateLeaveStatus({ leaveId, status }));
+    if (updateLeaveStatus.fulfilled.match(result)) {
+      dispatch(getPendingLeaves());
+      dispatch(getMyLeaves());
     }
   };
 
@@ -119,6 +130,51 @@ const ManagerDashboard = () => {
         </div>
 
         <div className="mt-8 rounded-3xl border border-slate-200 bg-white p-6 shadow-soft">
+          <h2 className="text-xl font-semibold">Pending Leave Requests</h2>
+          {leaveError && <p className="mt-3 text-sm text-rose-600">{leaveError}</p>}
+          <div className="mt-6 overflow-x-auto">
+            <table className="w-full min-w-[720px] divide-y divide-slate-200 text-left text-sm">
+              <thead className="bg-slate-50 text-slate-600">
+                <tr>
+                  <th className="px-4 py-3">Employee</th>
+                  <th className="px-4 py-3">Type</th>
+                  <th className="px-4 py-3">Dates</th>
+                  <th className="px-4 py-3">Days</th>
+                  <th className="px-4 py-3">Reason</th>
+                  <th className="px-4 py-3">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-200 text-slate-700">
+                {pendingLeaves.map((leave) => (
+                  <tr key={leave._id}>
+                    <td className="px-4 py-3 font-semibold">{leave.userId?.name || 'Unknown'}</td>
+                    <td className="px-4 py-3">{leave.type}</td>
+                    <td className="px-4 py-3">{new Date(leave.fromDate).toLocaleDateString()} — {new Date(leave.toDate).toLocaleDateString()}</td>
+                    <td className="px-4 py-3">{leave.days}</td>
+                    <td className="px-4 py-3">{leave.reason}</td>
+                    <td className="px-4 py-3">
+                      <div className="flex flex-wrap gap-2">
+                        <button className="rounded-2xl bg-emerald-600 px-3 py-2 text-xs font-semibold text-white" onClick={() => handleLeaveAction(leave._id, 'Approved')} disabled={leaveLoading}>
+                          Approve
+                        </button>
+                        <button className="rounded-2xl bg-rose-600 px-3 py-2 text-xs font-semibold text-white" onClick={() => handleLeaveAction(leave._id, 'Rejected')} disabled={leaveLoading}>
+                          Reject
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+                {pendingLeaves.length === 0 && (
+                  <tr>
+                    <td colSpan="6" className="px-4 py-6 text-center text-slate-500">No pending leaves.</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div className="mt-8 rounded-3xl border border-slate-200 bg-white p-6 shadow-soft">
           <h2 className="text-xl font-semibold">Task Board</h2>
           <div className="mt-6 grid gap-4 xl:grid-cols-4">
             {statusColumns.map((status) => (
@@ -148,8 +204,6 @@ const ManagerDashboard = () => {
             ))}
           </div>
         </div>
-
-        {reviewModalOpen && selectedTask && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 px-4">
             <div className="w-full max-w-lg rounded-3xl bg-white p-6 shadow-xl">
               <h3 className="text-xl font-semibold">Review task</h3>
