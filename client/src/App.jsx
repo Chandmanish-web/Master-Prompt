@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useDispatch, useSelector } from 'react-redux';
-import { Navigate, Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import LandingPage from './pages/LandingPage';
@@ -30,29 +31,53 @@ function App() {
     );
   }
 
+  const location = useLocation();
+
+  const pageTransition = {
+    initial: { opacity: 0, y: 20 },
+    animate: { opacity: 1, y: 0 },
+    exit: { opacity: 0, y: -20 },
+  };
+
+  const PageWrapper = ({ children }) => (
+    <motion.div
+      key={location.pathname}
+      initial="initial"
+      animate="animate"
+      exit="exit"
+      variants={pageTransition}
+      transition={{ duration: 0.4, ease: 'easeOut' }}
+      className="min-h-screen"
+    >
+      {children}
+    </motion.div>
+  );
+
   return (
-    <Routes>
-      <Route path="/" element={<LandingPage />} />
-      <Route path="/about" element={<About />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
+    <AnimatePresence mode="wait">
+      <Routes location={location} key={location.pathname}>
+        <Route path="/" element={<PageWrapper><LandingPage /></PageWrapper>} />
+        <Route path="/about" element={<PageWrapper><About /></PageWrapper>} />
+        <Route path="/login" element={<PageWrapper><Login /></PageWrapper>} />
+        <Route path="/register" element={<PageWrapper><Register /></PageWrapper>} />
 
-      <Route element={<PrivateRoute allowedRoles={['admin']} />}>
-        <Route path="/admin" element={<AdminDashboard />} />
-      </Route>
+        <Route element={<PrivateRoute allowedRoles={['admin']} />}>
+          <Route path="/admin" element={<PageWrapper><AdminDashboard /></PageWrapper>} />
+        </Route>
 
-      <Route element={<PrivateRoute allowedRoles={['manager']} />}>
-        <Route path="/manager" element={<ManagerDashboard />} />
-      </Route>
+        <Route element={<PrivateRoute allowedRoles={['manager']} />}>
+          <Route path="/manager" element={<PageWrapper><ManagerDashboard /></PageWrapper>} />
+        </Route>
 
-      <Route element={<PrivateRoute allowedRoles={['employee']} />}>
-        <Route path="/employee" element={<EmployeeDashboard />} />
-      </Route>
+        <Route element={<PrivateRoute allowedRoles={['employee']} />}>
+          <Route path="/employee" element={<PageWrapper><EmployeeDashboard /></PageWrapper>} />
+        </Route>
 
-      <Route element={<PrivateRoute allowedRoles={['admin', 'manager', 'employee']} />}>
-        <Route path="/chat" element={<Chat />} />
-      </Route>
-    </Routes>
+        <Route element={<PrivateRoute allowedRoles={['admin', 'manager', 'employee']} />}>
+          <Route path="/chat" element={<PageWrapper><Chat /></PageWrapper>} />
+        </Route>
+      </Routes>
+    </AnimatePresence>
   );
 }
 

@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { useDispatch, useSelector } from 'react-redux';
 import Navbar from '../components/Navbar';
 import AttendanceCalendar from '../components/AttendanceCalendar';
@@ -25,7 +26,7 @@ const AdminDashboard = () => {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-800">
       <Navbar />
-      <div className="mx-auto max-w-6xl px-6 py-12">
+      <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45 }} className="mx-auto max-w-6xl px-6 py-12">
         <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-soft">
           <p className="text-sm font-semibold uppercase tracking-[0.3em] text-brand-600">Admin Dashboard</p>
           <h1 className="mt-2 text-3xl font-semibold">Welcome, {user?.name || 'Admin'}</h1>
@@ -98,7 +99,7 @@ const AdminDashboard = () => {
         <div className="mt-8">
           <AttendanceCalendar records={report} title="Company Attendance" />
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 };

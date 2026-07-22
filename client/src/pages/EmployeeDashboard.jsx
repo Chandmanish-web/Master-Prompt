@@ -1,3 +1,4 @@
+import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Navbar from '../components/Navbar';
@@ -76,7 +77,7 @@ const EmployeeDashboard = () => {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-800">
       <Navbar />
-      <div className="mx-auto max-w-6xl px-6 py-12">
+      <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45 }} className="mx-auto max-w-6xl px-6 py-12">
         <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-soft">
           <p className="text-sm font-semibold uppercase tracking-[0.3em] text-brand-600">Employee Dashboard</p>
           <div className="mt-2 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
@@ -189,24 +190,37 @@ const EmployeeDashboard = () => {
         <div className="mt-8">
           <AttendanceCalendar records={report} title="My Attendance" />
         </div>
-      </div>
+      </motion.div>
 
-      {submissionOpen && selectedTask && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 px-4">
-          <div className="w-full max-w-lg rounded-3xl bg-white p-6 shadow-xl">
-            <h3 className="text-xl font-semibold">Submit result</h3>
-            <p className="mt-2 text-sm text-slate-600">{selectedTask.title}</p>
-            <form className="mt-4 space-y-4" onSubmit={handleSubmitResult}>
-              <textarea className="w-full rounded-2xl border border-slate-300 px-4 py-3" rows="4" placeholder="What did you complete?" value={submissionForm.text} onChange={(event) => setSubmissionForm({ ...submissionForm, text: event.target.value })} required />
-              <input className="w-full rounded-2xl border border-slate-300 px-4 py-3" placeholder="File or link (optional)" value={submissionForm.fileUrl} onChange={(event) => setSubmissionForm({ ...submissionForm, fileUrl: event.target.value })} />
-              <div className="flex justify-end gap-3">
-                <button className="rounded-2xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700" type="button" onClick={() => setSubmissionOpen(false)}>Cancel</button>
-                <button className="rounded-2xl bg-brand-600 px-4 py-2 text-sm font-semibold text-white" type="submit">Submit</button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+      <AnimatePresence>
+        {submissionOpen && selectedTask && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 px-4"
+          >
+            <motion.div
+              initial={{ opacity: 0, y: 16, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 16, scale: 0.98 }}
+              transition={{ duration: 0.2, ease: 'easeOut' }}
+              className="w-full max-w-lg rounded-3xl bg-white p-6 shadow-xl"
+            >
+              <h3 className="text-xl font-semibold">Submit result</h3>
+              <p className="mt-2 text-sm text-slate-600">{selectedTask.title}</p>
+              <form className="mt-4 space-y-4" onSubmit={handleSubmitResult}>
+                <textarea className="w-full rounded-2xl border border-slate-300 px-4 py-3" rows="4" placeholder="What did you complete?" value={submissionForm.text} onChange={(event) => setSubmissionForm({ ...submissionForm, text: event.target.value })} required />
+                <input className="w-full rounded-2xl border border-slate-300 px-4 py-3" placeholder="File or link (optional)" value={submissionForm.fileUrl} onChange={(event) => setSubmissionForm({ ...submissionForm, fileUrl: event.target.value })} />
+                <div className="flex flex-col gap-3 sm:flex-row sm:justify-end">
+                  <button className="rounded-2xl border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700" type="button" onClick={() => setSubmissionOpen(false)}>Cancel</button>
+                  <button className="rounded-2xl bg-brand-600 px-4 py-2 text-sm font-semibold text-white" type="submit">Submit</button>
+                </div>
+              </form>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

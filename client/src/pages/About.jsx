@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion';
 import { Users, Flag, Briefcase } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Card from '../components/ui/Card';
@@ -7,7 +8,7 @@ const About = () => {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900">
       <div className="mx-auto max-w-7xl px-6 py-16">
-        <div className="grid gap-8 lg:grid-cols-[1fr_0.75fr] lg:items-center">
+        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45 }} className="grid gap-8 lg:grid-cols-[1fr_0.75fr] lg:items-center">
           <div className="space-y-4">
             <span className="inline-flex rounded-full bg-brand-100 px-3 py-1 text-sm font-semibold text-brand-700">About WorkTrack</span>
             <h1 className="text-4xl font-semibold tracking-tight text-slate-900 sm:text-5xl">WorkTrack Technologies</h1>
@@ -18,7 +19,7 @@ const About = () => {
             </div>
           </div>
 
-          <div className="space-y-4">
+          <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.55, delay: 0.08 }} className="space-y-4">
             <Card className="space-y-4">
               <div className="flex items-center gap-4">
                 <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-50 text-brand-700"><Flag className="h-6 w-6" /></div>
@@ -48,8 +49,8 @@ const About = () => {
                 </div>
               </div>
             </Card>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       </div>
     </div>
   );

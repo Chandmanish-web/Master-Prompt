@@ -59,8 +59,8 @@ const Chat = () => {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-800">
       <Navbar />
-      <div className="mx-auto flex max-w-7xl gap-6 px-6 py-8">
-        <aside className="w-full max-w-sm rounded-3xl border border-slate-200 bg-white p-4 shadow-soft">
+      <div className="mx-auto flex flex-col gap-6 px-6 py-8 lg:flex-row lg:items-start">
+        <aside className="w-full lg:w-[22rem] rounded-3xl border border-slate-200 bg-white p-4 shadow-soft">
           <div className="mb-4 flex items-center justify-between">
             <h2 className="text-lg font-semibold">Chats</h2>
             <button
