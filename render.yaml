@@ -3,21 +3,21 @@ services:
     name: worktrack-server
     env: docker
     dockerfilePath: server/Dockerfile
-    plan: starter
+    plan: free
     envVars:
       - key: MONGO_URI
-        value: "REPLACE_WITH_MONGO_URI"
+        sync: false
       - key: JWT_SECRET
-        value: "REPLACE_WITH_SECRET"
+        sync: false
       - key: CLIENT_URL
-        value: "https://your-frontend.onrender.com"
-  - type: static_site
+        sync: false
+  - type: web
     name: worktrack-client
     env: static
     rootDir: client
     buildCommand: npm ci && npm run build
-    publishPath: dist
-    plan: starter
+    staticPublishPath: dist
+    plan: free
     envVars:
       - key: VITE_API_URL
-        value: "https://your-api.onrender.com/api"
+        sync: false
