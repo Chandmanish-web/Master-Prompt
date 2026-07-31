@@ -7,6 +7,8 @@ const connectDB = async () => {
     console.warn('MONGO_URI is not defined; using default localhost connection string.');
   }
 
+  mongoose.set('strictQuery', false);
+
   try {
     const conn = await mongoose.connect(mongoUri, {
       serverSelectionTimeoutMS: 5000, // fail fast if server is unreachable
