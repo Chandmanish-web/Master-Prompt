@@ -7,16 +7,16 @@ const connectDB = async () => {
     console.warn('MONGO_URI is not defined; using default localhost connection string.');
   }
 
+  mongoose.set('strictQuery', false);
+
   try {
     const conn = await mongoose.connect(mongoUri, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
       serverSelectionTimeoutMS: 5000, // fail fast if server is unreachable
     });
     console.log(`MongoDB connected: ${conn.connection.host}`);
   } catch (error) {
     console.error(`MongoDB connection failed: ${error.message}`);
-    // continue without throwing so server can still start for local dev
+    throw error;
   }
 };
 
