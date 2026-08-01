@@ -1,14 +1,13 @@
 import axios from 'axios';
 
-const baseURL = import.meta.env.VITE_API_URL;
+const configuredBase = import.meta.env.VITE_API_URL;
+const baseURL = configuredBase || '/api';
 
-if (!baseURL) {
-  throw new Error('VITE_API_URL is not defined. Set it in your environment variables.');
+if (!configuredBase) {
+  console.warn('VITE_API_URL is not defined; falling back to relative "/api". Set VITE_API_URL for production.');
 }
 
-const api = axios.create({
-  baseURL,
-});
+const api = axios.create({ baseURL });
 
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('worktrack-auth-token');

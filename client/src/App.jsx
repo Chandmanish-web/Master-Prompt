@@ -1,15 +1,17 @@
-import { useEffect } from 'react';
+import { useEffect, Suspense, lazy } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useDispatch, useSelector } from 'react-redux';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import LandingPage from './pages/LandingPage';
-import About from './pages/About';
-import AdminDashboard from './pages/AdminDashboard';
-import ManagerDashboard from './pages/ManagerDashboard';
-import EmployeeDashboard from './pages/EmployeeDashboard';
-import Chat from './pages/Chat';
+import LoadingSpinner from './components/ui/LoadingSpinner';
+
+const Login = lazy(() => import('./pages/Login'));
+const Register = lazy(() => import('./pages/Register'));
+const LandingPage = lazy(() => import('./pages/LandingPage'));
+const About = lazy(() => import('./pages/About'));
+const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
+const ManagerDashboard = lazy(() => import('./pages/ManagerDashboard'));
+const EmployeeDashboard = lazy(() => import('./pages/EmployeeDashboard'));
+const Chat = lazy(() => import('./pages/Chat'));
 import PrivateRoute from './routes/PrivateRoute';
 import { getCurrentUser } from './redux/authSlice';
 
@@ -18,12 +20,12 @@ function App() {
   const { token, loading } = useSelector((state) => state.auth);
 
   useEffect(() => {
-    if (token || localStorage.getItem('worktrack-auth-token')) {
+    if (token || localStorage.getItem('worktrack-auth')) {
       dispatch(getCurrentUser());
     }
   }, [dispatch, token]);
 
-  if (loading && (token || localStorage.getItem('worktrack-auth-token'))) {
+  if (loading && (token || localStorage.getItem('worktrack-auth'))) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-slate-50 text-slate-700">
         <div className="rounded-3xl border border-slate-200 bg-white px-8 py-6 shadow-soft">Loading your workspace...</div>
@@ -55,11 +57,12 @@ function App() {
 
   return (
     <AnimatePresence mode="wait">
-      <Routes location={location} key={location.pathname}>
-        <Route path="/" element={<PageWrapper><LandingPage /></PageWrapper>} />
-        <Route path="/about" element={<PageWrapper><About /></PageWrapper>} />
-        <Route path="/login" element={<PageWrapper><Login /></PageWrapper>} />
-        <Route path="/register" element={<PageWrapper><Register /></PageWrapper>} />
+      <Suspense fallback={<div className="p-8"><LoadingSpinner /></div>}>
+        <Routes location={location} key={location.pathname}>
+          <Route path="/" element={<PageWrapper><LandingPage /></PageWrapper>} />
+          <Route path="/about" element={<PageWrapper><About /></PageWrapper>} />
+          <Route path="/login" element={<PageWrapper><Login /></PageWrapper>} />
+          <Route path="/register" element={<PageWrapper><Register /></PageWrapper>} />
 
         <Route element={<PrivateRoute allowedRoles={['admin']} />}>
           <Route path="/admin" element={<PageWrapper><AdminDashboard /></PageWrapper>} />
@@ -73,10 +76,11 @@ function App() {
           <Route path="/employee" element={<PageWrapper><EmployeeDashboard /></PageWrapper>} />
         </Route>
 
-        <Route element={<PrivateRoute allowedRoles={['admin', 'manager', 'employee']} />}>
-          <Route path="/chat" element={<PageWrapper><Chat /></PageWrapper>} />
-        </Route>
-      </Routes>
+          <Route element={<PrivateRoute allowedRoles={["admin", "manager", "employee"]} />}>
+            <Route path="/chat" element={<PageWrapper><Chat /></PageWrapper>} />
+          </Route>
+        </Routes>
+      </Suspense>
     </AnimatePresence>
   );
 }

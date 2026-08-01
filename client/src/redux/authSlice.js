@@ -61,15 +61,12 @@ export const registerUser = createAsyncThunk('auth/registerUser', async (userDat
 
 export const getCurrentUser = createAsyncThunk('auth/getCurrentUser', async (_, { getState, rejectWithValue }) => {
   try {
-    const token = getState().auth.token || localStorage.getItem('worktrack-auth-token');
+    const stored = readStoredAuth();
+    const token = getState().auth.token || stored?.token;
 
-    if (!token) {
-      return null;
-    }
+    if (!token) return null;
 
-    const response = await api.get('/auth/me', {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    const response = await api.get('/auth/me', { headers: { Authorization: `Bearer ${token}` } });
 
     return {
       token,
@@ -82,7 +79,6 @@ export const getCurrentUser = createAsyncThunk('auth/getCurrentUser', async (_, 
 
 const persistAuth = (token, user) => {
   localStorage.setItem('worktrack-auth', JSON.stringify({ token, user }));
-  localStorage.setItem('worktrack-auth-token', token);
 };
 
 const authSlice = createSlice({
@@ -154,7 +150,6 @@ const authSlice = createSlice({
           state.token = null;
           state.isAuthenticated = false;
           localStorage.removeItem('worktrack-auth');
-          localStorage.removeItem('worktrack-auth-token');
         }
       })
       .addCase(getCurrentUser.rejected, (state, action) => {
@@ -164,7 +159,6 @@ const authSlice = createSlice({
         state.token = null;
         state.error = action.payload;
         localStorage.removeItem('worktrack-auth');
-        localStorage.removeItem('worktrack-auth-token');
       });
   },
 });
