@@ -1,10 +1,11 @@
 services:
   - type: web
     name: worktrack-server
-    env: docker
-    dockerfilePath: server/Dockerfile
+    runtime: docker
+    rootDir: server
+    dockerfilePath: Dockerfile
     plan: free
-    autoDeploy: true
+    autoDeployTrigger: commit
     envVars:
       - key: MONGO_URI
         sync: false
@@ -12,35 +13,14 @@ services:
         sync: false
       - key: CLIENT_URL
         sync: false
+
   - type: web
     name: worktrack-client
-    env: static
+    runtime: static
     rootDir: client
     buildCommand: npm ci && npm run build
     staticPublishPath: dist
-    autoDeploy: true
-    envVars:
-      - key: VITE_API_URL
-        sync: false
-services:
-  - type: web
-    name: worktrack-server
-    env: docker
-    dockerfilePath: server/Dockerfile
-    plan: free
-    envVars:
-      - key: MONGO_URI
-        sync: false
-      - key: JWT_SECRET
-        sync: false
-      - key: CLIENT_URL
-        sync: false
-  - type: web
-    name: worktrack-client
-    env: static
-    rootDir: client
-    buildCommand: npm ci && npm run build
-    staticPublishPath: dist
+    autoDeployTrigger: commit
     envVars:
       - key: VITE_API_URL
         sync: false
