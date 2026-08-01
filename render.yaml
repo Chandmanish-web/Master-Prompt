@@ -1,6 +1,6 @@
 services:
-  - type: web
-    name: worktrack-server
+  - name: worktrack-server
+    type: web
     runtime: docker
     dockerfilePath: server/Dockerfile
     autoDeploy: true
@@ -11,8 +11,8 @@ services:
         sync: false
       - key: CLIENT_URL
         sync: false
-  - type: static
-    name: worktrack-client
+  - name: worktrack-client
+    type: web
     runtime: static
     rootDir: client
     buildCommand: npm ci && npm run build
