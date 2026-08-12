@@ -79,6 +79,8 @@ function App() {
           <Route element={<PrivateRoute allowedRoles={["admin", "manager", "employee"]} />}>
             <Route path="/chat" element={<PageWrapper><Chat /></PageWrapper>} />
           </Route>
+
+          <Route path="*" element={<PageWrapper><LandingPage /></PageWrapper>} />
         </Routes>
       </Suspense>
     </AnimatePresence>
