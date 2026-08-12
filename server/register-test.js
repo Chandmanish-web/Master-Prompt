@@ -14,8 +14,8 @@ const fetch = globalThis.fetch || require('node-fetch');
     });
 
     const body = await response.text();
-    console.log('STATUS', response.status);
-    console.log('BODY', body);
+    console.log('Registration test response', response.status);
+    console.log(body);
   } catch (error) {
     console.error('ERROR', error.message);
   }

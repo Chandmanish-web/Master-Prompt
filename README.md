@@ -64,6 +64,13 @@ PORT=5000
 CLIENT_URL=http://localhost:5173
 ```
 
+Then verify Atlas connectivity:
+
+```bash
+cd server
+npm run check-mongo
+```
+
 ### 2. Frontend
 
 ```bash
@@ -81,6 +88,7 @@ The project currently includes:
 - authentication and JWT-based user session handling
 - role-based dashboards
 - protected chat module with MongoDB persistence
+- Render deployment manifest in `render.yaml`
 
 ## Notes
 

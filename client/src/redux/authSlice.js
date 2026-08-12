@@ -23,21 +23,17 @@ const initialState = {
 
 export const loginUser = createAsyncThunk('auth/loginUser', async (credentials, { rejectWithValue }) => {
   try {
-    console.log('loginUser: sending credentials ->', { email: credentials.email });
     const loginResponse = await api.post('/auth/login', credentials);
-    console.log('loginUser: loginResponse ->', loginResponse?.data);
     const token = loginResponse.data.token;
     const meResponse = await api.get('/auth/me', {
       headers: { Authorization: `Bearer ${token}` },
     });
-    console.log('loginUser: meResponse ->', meResponse?.data);
 
     return {
       token,
       user: meResponse.data.user,
     };
   } catch (error) {
-    console.error('loginUser: error ->', error?.response?.data || error.message || error);
     return rejectWithValue(error.response?.data?.message || 'Login failed');
   }
 });
@@ -91,7 +87,6 @@ const authSlice = createSlice({
       state.isAuthenticated = false;
       state.error = null;
       localStorage.removeItem('worktrack-auth');
-      localStorage.removeItem('worktrack-auth-token');
     },
     setUserFromStorage: (state, action) => {
       state.user = action.payload.user;

@@ -61,5 +61,3 @@ router.messageValidators = messageValidators;
 router.chatHistoryValidators = chatHistoryValidators;
 
 module.exports = router;
-
-module.exports = router;

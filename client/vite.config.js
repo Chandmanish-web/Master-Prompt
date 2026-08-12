@@ -9,7 +9,7 @@ if (process.env.ANALYZE) {
 }
 
 export default defineConfig({
-  base: '/Master-Prompt/',
+  base: '/',
   plugins,
   server: {
     host: '0.0.0.0',

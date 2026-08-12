@@ -22,7 +22,7 @@ Render Deployment Guide
        - `JWT_SECRET` = a strong secret
        - `CLIENT_URL` = `https://<your-frontend>.onrender.com`
    - For the client service:
-     - Create another Web Service using `client/Dockerfile`.
+     - Set `Dockerfile Path` to `client/Dockerfile`.
      - Set env var `VITE_API_URL` = `https://<your-api>.onrender.com/api`
 
 4. Advanced: use `render.yaml`
@@ -37,6 +37,10 @@ Render Deployment Guide
 6. Clearing cache
    - On Render, trigger a manual deploy to rebuild images from the latest commit.
    - Locally, rebuild Docker images with `docker compose build --no-cache`.
+
+7. Verify MongoDB Atlas connection
+   - In the `server` folder, create or update `.env` with your `MONGO_URI`.
+   - Run `npm run check-mongo` from `server` to verify Atlas connectivity.
 
 If you want, I can:
 - Fork the repo and push your branch to your fork (if you provide GitHub details), or

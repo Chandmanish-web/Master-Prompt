@@ -24,7 +24,6 @@ const markAbsent = async () => {
 
     if (recordsToCreate.length) {
       await Attendance.insertMany(recordsToCreate);
-      console.log(`Marked ${recordsToCreate.length} users absent`);
     }
   } catch (error) {
     console.error('Absent marking job failed:', error.message);
