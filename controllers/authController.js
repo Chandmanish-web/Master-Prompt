@@ -63,8 +63,6 @@ exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    console.log('LOGIN: incoming email ->', email);
-
     if (!email || !password) {
       return res.status(400).json({
         success: false,
@@ -73,7 +71,6 @@ exports.login = async (req, res) => {
     }
 
     const user = await User.findOne({ email });
-    console.log('LOGIN: user found ->', !!user);
     if (!user) {
       return res.status(401).json({
         success: false,
@@ -82,7 +79,6 @@ exports.login = async (req, res) => {
     }
 
     const isMatch = await user.matchPassword(password);
-    console.log('LOGIN: password match ->', isMatch);
     if (!isMatch) {
       return res.status(401).json({
         success: false,
