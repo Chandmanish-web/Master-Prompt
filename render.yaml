@@ -8,8 +8,7 @@ services:
     autoDeployTrigger: commit
     envVars:
       - key: MONGO_URI
-        fromDatabase:
-          name: worktrack-db
+        sync: false
       - key: JWT_SECRET
         sync: false
       - key: CLIENT_URL
