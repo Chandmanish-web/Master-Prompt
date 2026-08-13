@@ -5,9 +5,12 @@ WORKDIR /app
 
 ARG VITE_API_URL=http://localhost:5000/api
 ENV VITE_API_URL=$VITE_API_URL
+ENV NODE_ENV=development
 
 COPY package*.json ./
-RUN npm ci
+# Use npm install for development (installs all dependencies + devDependencies)
+# npm ci uses lock file but in alpine sometimes has issues
+RUN npm install
 
 COPY . ./
 RUN npm run build
