@@ -6,6 +6,7 @@ const rateLimit = require('express-rate-limit');
 const pino = require('pino-http')();
 require('express-async-errors');
 const connectDB = require('./config/db');
+const createIndexes = require('./config/createIndexes');
 const errorHandler = require('./middleware/errorHandler');
 const authRoutes = require('./routes/authRoutes');
 const chatRoutes = require('./routes/chatRoutes');
@@ -96,6 +97,7 @@ app.use(errorHandler);
 const startServer = async () => {
   try {
     await connectDB();
+    await createIndexes();
     startAbsentJob();
     app.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);
