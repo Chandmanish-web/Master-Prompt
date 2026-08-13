@@ -8,7 +8,7 @@ services:
     autoDeployTrigger: commit
     envVars:
       - key: MONGO_URI
-        value: mongodb+srv://Masterprompt011%40admin:Masterprompt011@cluster0.mbmtfym.mongodb.net/worktrack?retryWrites=true&w=majority&appName=Cluster0
+        value: mongodb+srv://Master_Prompt0001:NEWPASSWORD123@cluster0.mbmtfym.mongodb.net/worktrack?retryWrites=true&w=majority&appName=Cluster0
       - key: JWT_SECRET
         value: worktrack-dev-secret
       - key: CLIENT_URL

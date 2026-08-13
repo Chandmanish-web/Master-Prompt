@@ -15,7 +15,7 @@ services:
       dockerfile: Dockerfile
     restart: unless-stopped
     environment:
-      - MONGO_URI=mongodb+srv://Masterprompt011%40admin:Masterprompt011@cluster0.mbmtfym.mongodb.net/worktrack?retryWrites=true&w=majority&appName=Cluster0
+      - MONGO_URI=mongodb+srv://Master_Prompt0001:NEWPASSWORD123@cluster0.mbmtfym.mongodb.net/worktrack?retryWrites=true&w=majority&appName=Cluster0
       - JWT_SECRET=worktrack-dev-secret
       - PORT=5000
       - CLIENT_URL=http://localhost:4173
@@ -28,9 +28,9 @@ services:
     build:
       context: ./client
       dockerfile: Dockerfile
+      args:
+        - VITE_API_URL=http://localhost:5000/api
     restart: unless-stopped
-    environment:
-      - VITE_API_URL=http://localhost:5000/api
     ports:
       - '4173:4173'
     depends_on:

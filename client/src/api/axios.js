@@ -1,10 +1,13 @@
 import axios from 'axios';
 
 const configuredBase = import.meta.env.VITE_API_URL;
-const baseURL = configuredBase || '/api';
+const fallbackBase = typeof window !== 'undefined' && window.location.hostname === 'localhost'
+  ? 'http://localhost:5000/api'
+  : '/api';
+const baseURL = configuredBase || fallbackBase;
 
 if (!configuredBase) {
-  console.warn('VITE_API_URL is not defined; falling back to relative "/api". Set VITE_API_URL for production.');
+  console.warn('VITE_API_URL is not defined; using fallback API base:', baseURL);
 }
 
 const getStoredToken = () => {
