@@ -12,19 +12,25 @@ export default defineConfig({
     port: 5173,
   },
   build: {
-    // Optimize chunk splitting for better caching
+    // Optimize chunk splitting for better caching using function syntax
     rollupOptions: {
       output: {
-        manualChunks: {
-          'vendor': ['react', 'react-dom', 'react-router-dom'],
-          'redux': ['@reduxjs/toolkit', 'react-redux'],
-          'ui': ['framer-motion', 'axios'],
+        manualChunks: (id) => {
+          if (id.includes('node_modules/react') || id.includes('node_modules/react-dom') || id.includes('node_modules/react-router-dom')) {
+            return 'vendor';
+          }
+          if (id.includes('node_modules/@reduxjs/toolkit') || id.includes('node_modules/react-redux')) {
+            return 'redux';
+          }
+          if (id.includes('node_modules/framer-motion') || id.includes('node_modules/axios')) {
+            return 'ui';
+          }
         },
       },
     },
     // Reduce chunk size warnings
     chunkSizeWarningLimit: 500,
-    // Enable source maps for debugging in production
+    // Disable source maps for faster builds
     sourcemap: false,
     // Minify with terser
     minify: 'terser',
