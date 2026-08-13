@@ -20,10 +20,9 @@ services:
 
   - type: web
     name: worktrack-client
-    runtime: static
+    runtime: docker
     rootDir: client
-    buildCommand: npm ci && npm run build
-    staticPublishPath: dist
+    dockerfilePath: Dockerfile
     autoDeployTrigger: commit
     envVars:
       - key: VITE_API_URL
