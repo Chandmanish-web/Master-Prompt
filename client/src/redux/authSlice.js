@@ -23,15 +23,11 @@ const initialState = {
 
 export const loginUser = createAsyncThunk('auth/loginUser', async (credentials, { rejectWithValue }) => {
   try {
-    const loginResponse = await api.post('/auth/login', credentials);
-    const token = loginResponse.data.token;
-    const meResponse = await api.get('/auth/me', {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-
+    const response = await api.post('/auth/login', credentials);
+    
     return {
-      token,
-      user: meResponse.data.user,
+      token: response.data.token,
+      user: response.data.user,
     };
   } catch (error) {
     return rejectWithValue(error.response?.data?.message || 'Login failed');
@@ -40,15 +36,11 @@ export const loginUser = createAsyncThunk('auth/loginUser', async (credentials, 
 
 export const registerUser = createAsyncThunk('auth/registerUser', async (userData, { rejectWithValue }) => {
   try {
-    const registerResponse = await api.post('/auth/register', userData);
-    const token = registerResponse.data.token;
-    const meResponse = await api.get('/auth/me', {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-
+    const response = await api.post('/auth/register', userData);
+    
     return {
-      token,
-      user: meResponse.data.user,
+      token: response.data.token,
+      user: response.data.user,
     };
   } catch (error) {
     return rejectWithValue(error.response?.data?.message || 'Registration failed');
