@@ -9,19 +9,14 @@ services:
     envVars:
       - key: MONGO_URI
         value: mongodb+srv://Masterprompt011%40admin:Masterprompt011@cluster0.mbmtfym.mongodb.net/worktrack?retryWrites=true&w=majority&appName=Cluster0
-        sync: false
       - key: JWT_SECRET
         value: worktrack-dev-secret
-        sync: false
       - key: CLIENT_URL
         value: https://worktrack-client.onrender.com
-        sync: false
       - key: PORT
         value: 5000
-        sync: false
       - key: NODE_ENV
         value: production
-        sync: false
 
   - type: web
     name: worktrack-client
@@ -33,4 +28,3 @@ services:
     envVars:
       - key: VITE_API_URL
         value: https://worktrack-server.onrender.com/api
-        sync: false
