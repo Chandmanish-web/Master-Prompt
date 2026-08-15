@@ -73,7 +73,7 @@ Updated package.json:
 
 ## Why the Docker Build Failed
 
-The actual error message from Render (`sh: 1: vite: not found`) was **misleading**. The real issues were:
+The actual error message from Vercel (`sh: 1: vite: not found`) was **misleading**. The real issues were:
 
 1. **Primary Issue:** vite.config.js had invalid rollupOptions syntax
 2. **Secondary Issue:** terser minifier was missing
@@ -137,19 +137,19 @@ The Dockerfile now:
 
 ### No Changes Needed
 - ✅ **client/Dockerfile** - Already correct (multi-stage, installs all deps)
-- ✅ **render.yaml** - Already correct (Docker runtime)
+- ✅ **vercel.json** - Already correct (Docker runtime)
 - ✅ **.dockerignore** - Already correct
 
 ---
 
-## What Happens on Render Now
+## What Happens on Vercel Now
 
-1. **Code pushed** to GitHub → Render detects change
-2. **Render reads** render.yaml → sees Docker runtime for client
-3. **Render builds** client/Dockerfile:
+1. **Code pushed** to GitHub → Vercel detects change
+2. **Vercel reads** vercel.json → sees Docker runtime for client
+3. **Vercel builds** client/Dockerfile:
    - Builder stage: `npm ci` + `npm run build` → creates dist/ ✅
    - Production stage: copies dist/ + runs vite preview server ✅
-4. **Frontend deployed** and serves on https://worktrack-client.onrender.com ✅
+4. **Frontend deployed** and serves on https://worktrack-client.onVercel.com ✅
 
 ---
 
@@ -180,10 +180,10 @@ Total size: ~500 kB gzipped (optimized with code splitting and minification)
 ## Next Steps
 
 1. **Push changes** to GitHub (DONE ✅)
-2. **Trigger Render rebuild:**
-   - Go to Render Dashboard → worktrack-client → Manual Deploy
+2. **Trigger Vercel rebuild:**
+   - Go to Vercel Dashboard → worktrack-client → Manual Deploy
    - Or push another commit to trigger auto-deploy
 3. **Monitor build logs** for success
-4. **Test frontend** at https://worktrack-client.onrender.com
+4. **Test frontend** at https://worktrack-client.onVercel.com
 
 The deployment should now succeed! 🚀

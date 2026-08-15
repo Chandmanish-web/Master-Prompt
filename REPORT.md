@@ -16,15 +16,15 @@ Outstanding items and recommendations:
 
 - Increase automated test coverage (add integration and e2e tests) to reach 90% target.
 - Add Sentry or equivalent for production error monitoring and alerting.
-- Harden CSP further by removing dev-time `unsafe-inline` and adopting nonce injection into server-rendered HTML (if used).
+- Harden CSP further by removing dev-time `unsafe-inline` and adopting nonce injection into server-Verceled HTML (if used).
 - Add more performance optimizations: image optimization, critical CSS, replace heavy libs where possible.
 - Implement production-grade rate limiting and IP allowlist as needed.
 - Add artifact scanning and dependency pinning in CI.
 
 Deployment checklist:
 
-- Ensure `JWT_SECRET`, `MONGO_URI`, and other secrets are provided via the host/Render secrets store (don't commit `.env`).
-- Use the provided `docker-compose.yml` or Render config; use the improved `server/Dockerfile`.
+- Ensure `JWT_SECRET`, `MONGO_URI`, and other secrets are provided via the host/Vercel secrets store (don't commit `.env`).
+- Use the provided `docker-compose.yml` or Vercel config; use the improved `server/Dockerfile`.
 - Configure HTTPS and load balancer health checks.
 
 Files changed summary:

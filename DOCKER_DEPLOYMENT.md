@@ -59,11 +59,11 @@ docker-compose build --no-cache
 docker-compose exec server npm run seed
 ```
 
-## Production Deployment on Render
+## Production Deployment on Vercel
 
-### Using Render's Docker Support
+### Using Vercel's Docker Support
 
-1. **Go to render.com dashboard**
+1. **Go to Vercel.com dashboard**
 
 2. **Create New → Web Service → GitHub repository**
 
@@ -78,7 +78,7 @@ docker-compose exec server npm run seed
    ```
    MONGO_URI=mongodb+srv://user:pass@cluster.mongodb.net/worktrack
    JWT_SECRET=<generate-secure-secret>
-   CLIENT_URL=https://worktrack-client.onrender.com
+   CLIENT_URL=https://worktrack-client.onVercel.com
    NODE_ENV=production
    PORT=5000
    ```
@@ -87,11 +87,11 @@ docker-compose exec server npm run seed
    - Name: worktrack-client
    - Environment: Docker
    - Root Directory: client
-   - Build Command: `docker build -t worktrack-client --build-arg VITE_API_URL=https://worktrack-server.onrender.com/api .`
+   - Build Command: `docker build -t worktrack-client --build-arg VITE_API_URL=https://worktrack-server.onVercel.com/api .`
 
 6. **Configure Client Environment Variables:**
    ```
-   VITE_API_URL=https://worktrack-server.onrender.com/api
+   VITE_API_URL=https://worktrack-server.onVercel.com/api
    ```
 
 ## Docker Image Optimization
@@ -175,7 +175,7 @@ For production, consider:
 
 ## Monitoring & Logging
 
-Render provides:
+Vercel provides:
 - Deployment logs
 - Container metrics (CPU, memory, disk)
 - Error tracking
@@ -189,7 +189,7 @@ For advanced monitoring:
 
 ### Memory Optimization
 ```yaml
-# In docker-compose.yml or Render config
+# In docker-compose.yml or Vercel config
 deploy:
   resources:
     limits:
@@ -217,4 +217,4 @@ docker-compose exec mongo mongodump --out /backup
 docker-compose exec mongo mongorestore /backup
 ```
 
-For Render, use MongoDB Atlas backups in your cluster settings.
+For Vercel, use MongoDB Atlas backups in your cluster settings.

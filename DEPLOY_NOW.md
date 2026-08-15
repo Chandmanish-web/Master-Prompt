@@ -11,22 +11,22 @@ Both issues are now **fixed and pushed to GitHub**.
 
 ---
 
-## 📋 Deploy to Render (3 Steps)
+## 📋 Deploy to Vercel (3 Steps)
 
-### Step 1: Trigger Render Rebuild
+### Step 1: Trigger Vercel Rebuild
 
 Option A - **Manual Rebuild** (Immediate):
-1. Go to [https://render.com/dashboard](https://render.com/dashboard)
+1. Go to [https://Vercel.com/dashboard](https://Vercel.com/dashboard)
 2. Click on **worktrack-client** service
 3. Scroll to top → Click **Manual Deploy**
 4. Choose branch: **structure**
 5. Click **Deploy**
 
 Option B - **Auto Rebuild** (Next commit):
-- The next time you push to GitHub, Render will automatically rebuild
+- The next time you push to GitHub, Vercel will automatically rebuild
 
 ### Step 2: Monitor Build Progress
-1. In Render Dashboard, click **worktrack-client**
+1. In Vercel Dashboard, click **worktrack-client**
 2. Go to **Logs** tab
 3. Watch for these success indicators:
    ```
@@ -39,7 +39,7 @@ Option B - **Auto Rebuild** (Next commit):
 
 ### Step 3: Verify Deployment
 1. Wait for status to show **Live** ✅
-2. Visit your frontend: **https://worktrack-client.onrender.com**
+2. Visit your frontend: **https://worktrack-client.onVercel.com**
 3. Test login with: **admin@worktrack.com** / **password123**
 
 ---
@@ -71,7 +71,7 @@ manualChunks: (id) => {
 }
 ```
 
-### render.yaml
+### vercel.json
 ```yaml
 - type: web
   name: worktrack-client
@@ -84,7 +84,7 @@ manualChunks: (id) => {
 
 ## 📊 Build Output Breakdown
 
-When Render rebuilds, it will create these optimized bundles:
+When Vercel rebuilds, it will create these optimized bundles:
 
 ```
 dist/
@@ -122,7 +122,7 @@ npm run preview        # Serve frontend
 - [x] vite.config.js - manualChunks fixed
 - [x] terser added to devDependencies
 - [x] package-lock.json - updated
-- [x] render.yaml - uses Docker runtime
+- [x] vercel.json - uses Docker runtime
 - [x] Dockerfile - already correct
 - [x] All changes pushed to GitHub
 - [x] Build tested locally ✅
@@ -135,7 +135,7 @@ npm run preview        # Serve frontend
 
 ### Check These in Order:
 
-1. **Render Logs** - Go to service → Logs
+1. **Vercel Logs** - Go to service → Logs
    - Look for error messages
    - Should see "✓ built in X.XXs" if successful
 
@@ -149,8 +149,8 @@ npm run preview        # Serve frontend
    - Click **Manual Deploy** → Deploy again
    - Wait 5-10 minutes for full rebuild
 
-4. **Check Render Status** - Is Render having issues?
-   - Visit https://render.com/status
+4. **Check Vercel Status** - Is Vercel having issues?
+   - Visit https://Vercel.com/status
    - Check if services are up
 
 ### Debug Locally
@@ -166,7 +166,7 @@ ls dist/               # Should show dist folder with assets
 ## 📞 Next Steps
 
 1. **Deploy now** using the steps above
-2. **Monitor build** in Render logs
+2. **Monitor build** in Vercel logs
 3. **Test frontend** once it shows **Live** status
 4. **Report success** or issues
 
@@ -179,4 +179,4 @@ Your frontend is now **production-ready**! 🚀
 - **VITE_BUILD_FIX.md** - Detailed root cause analysis
 - **DEPLOYMENT_CHECKLIST.md** - Full deployment guide
 - **DOCKER_DEPLOYMENT.md** - Docker build details
-- **RENDER_SETUP.md** - Render configuration guide
+- **Vercel_SETUP.md** - Vercel configuration guide

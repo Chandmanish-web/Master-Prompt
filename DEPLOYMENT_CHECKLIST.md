@@ -17,14 +17,14 @@
 - ✅ Created .env.example template
 
 ### Documentation
-- ✅ RENDER_SETUP.md - Render deployment guide
+- ✅ Vercel_SETUP.md - Vercel deployment guide
 - ✅ DEPLOYMENT_FIX_GUIDE.md - Detailed fix documentation
 - ✅ DOCKER_DEPLOYMENT.md - Docker deployment guide
 - ✅ All changes committed to GitHub
 
 ---
 
-## 🚀 Deployment Steps for Render
+## 🚀 Deployment Steps for Vercel
 
 ### Step 1: Prepare MongoDB Atlas
 ```bash
@@ -44,9 +44,9 @@ node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 # a7f3c9d2e1b8f4a6c9e2d1a5b8c7f3e9d2a1b4c7f3e9d2a1b4c7f3e9d2a1b
 ```
 
-### Step 3: Deploy Backend to Render
+### Step 3: Deploy Backend to Vercel
 
-1. Go to https://render.com and sign in with GitHub
+1. Go to https://Vercel.com and sign in with GitHub
 2. Click "Create New" → "Web Service"
 3. Select your GitHub repository: `Master-Prompt`
 4. Fill in details:
@@ -61,7 +61,7 @@ node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
    ```
    MONGO_URI = mongodb+srv://user:pass@cluster.mongodb.net/worktrack?retryWrites=true&w=majority
    JWT_SECRET = <paste-generated-secret-from-step-2>
-   CLIENT_URL = https://worktrack-client.onrender.com
+   CLIENT_URL = https://worktrack-client.onVercel.com
    NODE_ENV = production
    PORT = 5000
    ```
@@ -69,9 +69,9 @@ node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 6. Click "Create Web Service"
 7. Wait for deployment (check Logs for "Server running on port 5000" and "Database indexes created")
 
-### Step 4: Deploy Frontend to Render
+### Step 4: Deploy Frontend to Vercel
 
-1. From Render dashboard, click "Create New" → "Web Service"
+1. From Vercel dashboard, click "Create New" → "Web Service"
 2. Select same GitHub repository
 3. Fill in details:
    - **Name:** worktrack-client
@@ -83,7 +83,7 @@ node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 
 4. Add environment variables:
    ```
-   VITE_API_URL = https://worktrack-server.onrender.com/api
+   VITE_API_URL = https://worktrack-server.onVercel.com/api
    ```
 
 5. Click "Create Web Service"
@@ -91,8 +91,8 @@ node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 
 ### Step 5: Verify Deployment
 
-1. Check that both services show "Live" status in Render dashboard
-2. Visit your frontend URL: https://worktrack-client.onrender.com
+1. Check that both services show "Live" status in Vercel dashboard
+2. Visit your frontend URL: https://worktrack-client.onVercel.com
 3. Test login:
    - Email: `admin@worktrack.com`
    - Password: `password123`
@@ -147,10 +147,10 @@ docker-compose down -v
 - ✅ Auto-deploy enabled: Yes
 - ✅ Latest commit includes all fixes and optimizations
 
-### Auto-Deployment with Render
-Render automatically deploys when you:
+### Auto-Deployment with Vercel
+Vercel automatically deploys when you:
 1. Push to your GitHub branch
-2. Render detects changes and rebuilds images
+2. Vercel detects changes and rebuilds images
 3. Services update automatically
 
 ### Committing Changes
@@ -160,22 +160,22 @@ git add .
 git commit -m "Your commit message"
 git push origin structure
 
-# Render will automatically detect and deploy!
+# Vercel will automatically detect and deploy!
 ```
 
 ---
 
-## 🔧 Troubleshooting Render Deployment
+## 🔧 Troubleshooting Vercel Deployment
 
 ### Backend Issues
 
 **"MongoDB connection failed"**
-- ✅ Verify MONGO_URI in Render Environment
+- ✅ Verify MONGO_URI in Vercel Environment
 - ✅ Check MongoDB Atlas network access (0.0.0.0/0)
 - ✅ Test locally: `cd server && npm run check-mongo`
 
 **"JWT_SECRET not defined"**
-- ✅ Go to Render dashboard → worktrack-server → Environment
+- ✅ Go to Vercel dashboard → worktrack-server → Environment
 - ✅ Verify JWT_SECRET is set
 
 **"CORS errors"**
@@ -184,7 +184,7 @@ git push origin structure
 
 **"Slow performance"**
 - ✅ Check that database indexes were created (look for "✓ Database indexes created" in logs)
-- ✅ Render free tier has shared CPU/RAM - consider upgrading for production
+- ✅ Vercel free tier has shared CPU/RAM - consider upgrading for production
 
 ### Frontend Issues
 
@@ -195,7 +195,7 @@ git push origin structure
 
 **"Blank page or 404"**
 - ✅ Clear browser cache (Ctrl+Shift+Delete)
-- ✅ Check frontend logs in Render dashboard
+- ✅ Check frontend logs in Vercel dashboard
 - ✅ Verify build command completed successfully
 
 **"Login/Register not working"**
@@ -229,7 +229,7 @@ git push origin structure
 - ✅ npm vulnerabilities resolved
 
 **Additional Production Security (Optional):**
-- [ ] Enable HTTPS/SSL certificates (Render auto-enables)
+- [ ] Enable HTTPS/SSL certificates (Vercel auto-enables)
 - [ ] Set up monitoring and alerting
 - [ ] Configure backups for MongoDB
 - [ ] Review and limit database access
@@ -240,14 +240,14 @@ git push origin structure
 ## 📞 Support & Next Steps
 
 ### If Deployment Fails
-1. Check Render logs (Dashboard → Service → Logs)
+1. Check Vercel logs (Dashboard → Service → Logs)
 2. Look for specific error messages
 3. Verify all environment variables are set
 4. Ensure MongoDB connection string is correct
 5. Test locally first: `docker-compose up`
 
 ### Monitoring
-1. Render Dashboard shows:
+1. Vercel Dashboard shows:
    - Deployment status
    - CPU/Memory usage
    - Error rates
@@ -267,7 +267,7 @@ git push origin structure
 
 ### Scaling (Future)
 When you need better performance:
-1. Upgrade Render plan (free → standard)
+1. Upgrade Vercel plan (free → standard)
 2. Enable database connection pooling
 3. Add caching layer (Redis)
 4. Implement pagination for large datasets
@@ -277,7 +277,7 @@ When you need better performance:
 
 ## 📚 Documentation Files
 
-- **RENDER_SETUP.md** - Quick Render setup guide
+- **Vercel_SETUP.md** - Quick Vercel setup guide
 - **DEPLOYMENT_FIX_GUIDE.md** - Detailed explanations of all fixes
 - **DOCKER_DEPLOYMENT.md** - Docker and docker-compose guide
 - **.env.example** - Environment variable template
@@ -290,8 +290,8 @@ When you need better performance:
 Your WorkTrack application is now:
 - ✅ **Optimized** - Faster login, better database performance
 - ✅ **Secure** - Credentials protected, vulnerabilities fixed
-- ✅ **Containerized** - Ready for Docker/Render deployment
+- ✅ **Containerized** - Ready for Docker/Vercel deployment
 - ✅ **Documented** - Clear guides for deployment and maintenance
 - ✅ **Production-Ready** - All best practices implemented
 
-**Next Step:** Follow the "Deployment Steps for Render" section above to go live! 🚀
+**Next Step:** Follow the "Deployment Steps for Vercel" section above to go live! 🚀

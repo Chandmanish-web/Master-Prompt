@@ -81,6 +81,21 @@ npm run dev
 
 The frontend will run on `http://localhost:5173` by default, and the backend API uses `http://localhost:5000`.
 
+## Deployment
+
+### Frontend on Vercel
+
+1. Import the `client` folder as a new Vercel project.
+2. Use the default Vite settings:
+   - Build command: `npm run build`
+   - Output directory: `dist`
+3. Add the environment variable `VITE_API_URL` in Vercel project settings.
+4. Point it to your deployed backend API URL, for example: `https://your-backend-domain.com/api`
+
+### Backend
+
+The Express backend is intended to run separately from the frontend, typically on a Node hosting platform or your own server.
+
 ## Current Status
 
 The project currently includes:
@@ -88,7 +103,7 @@ The project currently includes:
 - authentication and JWT-based user session handling
 - role-based dashboards
 - protected chat module with MongoDB persistence
-- Render deployment manifest in `render.yaml`
+- Vercel-ready frontend configuration
 
 ## Notes
 
