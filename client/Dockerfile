@@ -21,7 +21,7 @@ FROM node:20-alpine AS production
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm ci --production
+RUN npm install --include=dev
 
 COPY --from=builder /app/dist ./dist
 
