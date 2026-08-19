@@ -1,0 +1,19 @@
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Users, ShieldCheck, MessageCircle } from 'lucide-react';
+import Navbar from '../components/Navbar';
+import { getTeamMembers } from '../redux/taskSlice';
+
+const TeamPage = () => {
+  const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.auth);
+  const { teamMembers, loading, error } = useSelector((state) => state.tasks);
+
+  useEffect(() => { dispatch(getTeamMembers()); }, [dispatch]);
+
+  return (
+    <div className="min-h-screen bg-slate-50 text-slate-800"><Navbar /><main className="mx-auto max-w-7xl px-6 py-10"><div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]"><section className="rounded-3xl bg-cyan-950 p-8 text-white shadow-soft"><p className="text-sm font-semibold uppercase tracking-[0.28em] text-cyan-300">Team workspace</p><h1 className="mt-2 text-3xl font-semibold">Build a team that can see the whole picture.</h1><p className="mt-3 max-w-xl text-cyan-100">Your directory connects people to ownership, attendance, tasks, leave decisions, and team chat. Use the navigation to move from context to action.</p><div className="mt-8 grid gap-3 sm:grid-cols-3"><div className="rounded-2xl bg-white/10 p-4"><Users className="h-5 w-5 text-cyan-300" /><p className="mt-3 text-sm text-cyan-100">Know who owns the work</p></div><div className="rounded-2xl bg-white/10 p-4"><ShieldCheck className="h-5 w-5 text-cyan-300" /><p className="mt-3 text-sm text-cyan-100">Keep approvals accountable</p></div><div className="rounded-2xl bg-white/10 p-4"><MessageCircle className="h-5 w-5 text-cyan-300" /><p className="mt-3 text-sm text-cyan-100">Talk where work happens</p></div></div></section><section className="rounded-3xl border border-slate-200 bg-white p-8 shadow-soft"><p className="text-sm font-semibold uppercase tracking-[0.24em] text-brand-600">About WorkTrack</p><h2 className="mt-2 text-2xl font-semibold">A practical operating system for teams.</h2><p className="mt-4 leading-7 text-slate-600">Attendance records presence, Tasks makes delivery visible, Leave keeps time away predictable, and Chat keeps decisions close to the people doing the work.</p><div className="mt-6 border-t border-slate-200 pt-5 text-sm"><p className="font-semibold text-slate-900">Built by</p><p className="mt-2 text-slate-600">Manish · CEO</p><p className="text-slate-600">Pranav · Product Lead</p></div></section></div><section className="mt-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-soft"><div className="flex items-center justify-between"><div><p className="text-sm font-semibold uppercase tracking-[0.24em] text-brand-600">People directory</p><h2 className="mt-2 text-2xl font-semibold">{user?.role === 'employee' ? 'Your team' : 'Manage your team'}</h2></div><span className="rounded-full bg-slate-100 px-3 py-1 text-sm font-semibold">{teamMembers.length} people</span></div>{error && <p className="mt-4 text-sm text-rose-600">{error}</p>}{loading ? <p className="py-10 text-center text-slate-500">Loading team...</p> : <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">{teamMembers.map((member) => <article key={member._id} className="rounded-2xl border border-slate-200 p-4"><div className="flex items-center gap-3"><span className="flex h-11 w-11 items-center justify-center rounded-full bg-cyan-100 font-bold text-cyan-800">{member.name?.[0] || 'U'}</span><div><h3 className="font-semibold">{member.name}</h3><p className="text-sm capitalize text-slate-500">{member.role}</p></div></div><p className="mt-4 text-sm text-slate-500">{member.email}</p><p className="mt-1 text-xs text-slate-400">{member.department || 'WorkTrack team'}</p></article>)}{!teamMembers.length && <p className="col-span-full py-10 text-center text-slate-500">No team members are assigned yet.</p>}</div>}</section></main></div>
+  );
+};
+
+export default TeamPage;
