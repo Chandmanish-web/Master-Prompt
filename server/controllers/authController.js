@@ -46,6 +46,7 @@ exports.register = async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
+        leaveBalance: user.leaveBalance,
         department: user.department,
         managerId: user.managerId,
         joinDate: user.joinDate,
@@ -96,6 +97,7 @@ exports.login = async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
+        leaveBalance: user.leaveBalance,
         department: user.department,
         managerId: user.managerId,
         joinDate: user.joinDate,
@@ -143,7 +145,13 @@ exports.getTeamMembers = async (req, res) => {
     } else if (currentUser.role === 'manager') {
       members = await User.find({
         _id: { $ne: currentUser._id },
-        $or: [{ managerId: currentUser._id }, { managerId: null }],
+        managerId: currentUser._id,
+      })
+        .select('-password')
+        .sort({ name: 1 });
+    } else if (currentUser.role === 'employee') {
+      members = await User.find({
+        $or: [{ _id: currentUser.managerId }, { managerId: currentUser.managerId }],
       })
         .select('-password')
         .sort({ name: 1 });

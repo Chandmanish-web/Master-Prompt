@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useDispatch, useSelector } from 'react-redux';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import LoadingSpinner from './components/ui/LoadingSpinner';
+import { initializeSocket, disconnectSocket } from './socket/socket';
 
 const Login = lazy(() => import('./pages/Login'));
 const Register = lazy(() => import('./pages/Register'));
@@ -11,7 +12,11 @@ const About = lazy(() => import('./pages/About'));
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
 const ManagerDashboard = lazy(() => import('./pages/ManagerDashboard'));
 const EmployeeDashboard = lazy(() => import('./pages/EmployeeDashboard'));
+const AttendancePage = lazy(() => import('./pages/AttendancePage'));
 const Chat = lazy(() => import('./pages/Chat'));
+const TasksPage = lazy(() => import('./pages/TasksPage'));
+const LeavePage = lazy(() => import('./pages/LeavePage'));
+const TeamPage = lazy(() => import('./pages/TeamPage'));
 import PrivateRoute from './routes/PrivateRoute';
 import { getCurrentUser } from './redux/authSlice';
 
@@ -24,6 +29,15 @@ function App() {
       dispatch(getCurrentUser());
     }
   }, [dispatch, token]);
+
+  // Initialize Socket.IO when authenticated
+  useEffect(() => {
+    if (token) {
+      initializeSocket(token);
+    } else {
+      disconnectSocket();
+    }
+  }, [token]);
 
   if (loading && (token || localStorage.getItem('worktrack-auth'))) {
     return (
@@ -78,6 +92,10 @@ function App() {
 
           <Route element={<PrivateRoute allowedRoles={["admin", "manager", "employee"]} />}>
             <Route path="/chat" element={<PageWrapper><Chat /></PageWrapper>} />
+            <Route path="/attendance" element={<PageWrapper><AttendancePage /></PageWrapper>} />
+            <Route path="/tasks" element={<PageWrapper><TasksPage /></PageWrapper>} />
+            <Route path="/leave" element={<PageWrapper><LeavePage /></PageWrapper>} />
+            <Route path="/team" element={<PageWrapper><TeamPage /></PageWrapper>} />
           </Route>
 
           <Route path="*" element={<PageWrapper><LandingPage /></PageWrapper>} />

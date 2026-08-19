@@ -1,10 +1,13 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import api from '../api/axios';
+import { getSocket } from '../socket/socket';
 
-export const applyLeave = createAsyncThunk('leave/applyLeave', async (payload, { rejectWithValue }) => {
+export const applyLeave = createAsyncThunk('leave/applyLeave', async (payload, { getState, rejectWithValue }) => {
   try {
     const response = await api.post('/leaves', payload);
-    return response.data.leave;
+    const leave = response.data.leave;
+    getSocket()?.emit('leave:requested', { ...leave, userName: getState().auth.user?.name });
+    return leave;
   } catch (error) {
     return rejectWithValue(error.response?.data?.message || 'Failed to apply for leave');
   }
@@ -31,7 +34,9 @@ export const getPendingLeaves = createAsyncThunk('leave/getPendingLeaves', async
 export const updateLeaveStatus = createAsyncThunk('leave/updateLeaveStatus', async ({ leaveId, status }, { rejectWithValue }) => {
   try {
     const response = await api.patch(`/leaves/${leaveId}/status`, { status });
-    return response.data.leave;
+    const leave = response.data.leave;
+    getSocket()?.emit(status === 'Approved' ? 'leave:approved' : 'leave:rejected', { leaveId: leave._id, userId: leave.userId, reason: leave.reason });
+    return leave;
   } catch (error) {
     return rejectWithValue(error.response?.data?.message || 'Failed to update leave status');
   }
@@ -40,7 +45,7 @@ export const updateLeaveStatus = createAsyncThunk('leave/updateLeaveStatus', asy
 const initialState = {
   myLeaves: [],
   pendingLeaves: [],
-  leaveBalance: 0,
+  leaveBalance: null,
   loading: false,
   error: null,
 };

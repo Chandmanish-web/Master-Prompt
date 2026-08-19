@@ -4,12 +4,14 @@ const dotenv = require('dotenv');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const pino = require('pino-http')();
+const http = require('http');
 
 require('express-async-errors');
 
 const connectDB = require('./config/db');
 const createIndexes = require('./config/createIndexes');
 const errorHandler = require('./middleware/errorHandler');
+const initializeSocket = require('./socket');
 
 const authRoutes = require('./routes/authRoutes');
 const chatRoutes = require('./routes/chatRoutes');
@@ -132,8 +134,15 @@ const startServer = async () => {
 
     startAbsentJob();
 
-    app.listen(PORT, () => {
+    // Create HTTP server for Socket.IO
+    const httpServer = http.createServer(app);
+    
+    // Initialize Socket.IO
+    initializeSocket(httpServer);
+
+    httpServer.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);
+      console.log(`WebSocket ready for real-time connections`);
     });
   } catch (error) {
     console.error(`Failed to start server: ${error.message}`);

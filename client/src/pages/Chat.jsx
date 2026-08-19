@@ -2,12 +2,14 @@ import { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Navbar from '../components/Navbar';
 import { fetchChats, fetchChatHistory, getOrCreateChat, sendMessage, setActiveChat } from '../redux/chatSlice';
+import { useSocketEvent } from '../hooks/useSocket';
 
 const Chat = () => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
   const { chats, activeChat, messages, loading, sending, error } = useSelector((state) => state.chat);
   const [draft, setDraft] = useState('');
+  const [typingUser, setTypingUser] = useState(null);
 
   useEffect(() => {
     dispatch(fetchChats());
@@ -21,14 +23,27 @@ const Chat = () => {
     }
   }, [activeChat, chats, dispatch]);
 
-  useEffect(() => {
-    if (!activeChat?._id) return;
-    const timer = setInterval(() => {
+  // Listen for real-time chat messages via Socket.IO
+  useSocketEvent('chat:message', (data) => {
+    // Refetch chat history when a new message arrives
+    if (activeChat?._id) {
       dispatch(fetchChatHistory(activeChat._id));
-    }, 5000);
+    }
+  });
 
-    return () => clearInterval(timer);
-  }, [activeChat?._id, dispatch]);
+  // Listen for typing indicators
+  useSocketEvent('chat:typing', (data) => {
+    if (data.userId !== user?.id && data.userId !== activeChat?.participants?.find(p => p._id !== user?.id)?._id) {
+      setTypingUser(data.userName);
+      setTimeout(() => setTypingUser(null), 3000);
+    }
+  });
+
+  useSocketEvent('chat:stopTyping', (data) => {
+    if (data.userId !== user?.id) {
+      setTypingUser(null);
+    }
+  });
 
   const handleSelectChat = (chat) => {
     dispatch(setActiveChat(chat));
@@ -46,6 +61,20 @@ const Chat = () => {
     await dispatch(sendMessage({ chatId: activeChat._id, text: draft.trim() }));
     setDraft('');
     dispatch(fetchChatHistory(activeChat._id));
+  };
+
+  const handleTyping = () => {
+    // Emit typing event via Socket.IO
+    if (window.__socket) {
+      window.__socket.emit('chat:typing', { userName: user?.name });
+    }
+  };
+
+  const handleStopTyping = () => {
+    // Emit stop typing event via Socket.IO
+    if (window.__socket) {
+      window.__socket.emit('chat:stopTyping', {});
+    }
   };
 
   const displayName = useMemo(() => {
@@ -99,7 +128,9 @@ const Chat = () => {
         <section className="flex-1 rounded-3xl border border-slate-200 bg-white p-6 shadow-soft">
           <div className="mb-4 border-b border-slate-200 pb-4">
             <h2 className="text-xl font-semibold">{displayName}</h2>
-            <p className="text-sm text-slate-600">Real-time conversation history is saved in MongoDB.</p>
+            <p className="text-sm text-slate-600">
+              Real-time conversation via Socket.IO • Messages saved in MongoDB
+            </p>
           </div>
 
           {error && <p className="mb-4 text-sm text-rose-500">{error}</p>}
@@ -119,12 +150,22 @@ const Chat = () => {
             ) : (
               <p className="text-sm text-slate-500">No messages yet. Start the conversation.</p>
             )}
+            {typingUser && (
+              <div className="text-sm italic text-slate-500">
+                <span className="inline-block animate-pulse">●</span>
+                <span className="ml-2">{typingUser} is typing...</span>
+              </div>
+            )}
           </div>
 
           <form onSubmit={handleSend} className="flex gap-3">
             <input
               value={draft}
-              onChange={(event) => setDraft(event.target.value)}
+              onChange={(event) => {
+                setDraft(event.target.value);
+                handleTyping();
+              }}
+              onBlur={handleStopTyping}
               className="flex-1 rounded-2xl border border-slate-300 px-4 py-3 outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
               placeholder="Write a message..."
             />

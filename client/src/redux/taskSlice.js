@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import api from '../api/axios';
+import { getSocket } from '../socket/socket';
 
 const initialState = {
   myTasks: [],
@@ -12,7 +13,9 @@ const initialState = {
 export const createTask = createAsyncThunk('tasks/createTask', async (taskData, { rejectWithValue }) => {
   try {
     const response = await api.post('/tasks', taskData);
-    return response.data.task;
+    const task = response.data.task;
+    getSocket()?.emit('task:created', task);
+    return task;
   } catch (error) {
     return rejectWithValue(error.response?.data?.message || 'Unable to create task');
   }
@@ -49,7 +52,9 @@ export const getTeamMembers = createAsyncThunk('tasks/getTeamMembers', async (_,
 export const startTask = createAsyncThunk('tasks/startTask', async (taskId, { rejectWithValue }) => {
   try {
     const response = await api.put(`/tasks/${taskId}/start`);
-    return response.data.task;
+    const task = response.data.task;
+    getSocket()?.emit('task:statusChanged', { taskId: task._id, status: task.status, assignedTo: task.assignedTo?._id || task.assignedTo });
+    return task;
   } catch (error) {
     return rejectWithValue(error.response?.data?.message || 'Unable to start task');
   }
@@ -58,7 +63,10 @@ export const startTask = createAsyncThunk('tasks/startTask', async (taskId, { re
 export const submitTask = createAsyncThunk('tasks/submitTask', async ({ taskId, text, fileUrl }, { rejectWithValue }) => {
   try {
     const response = await api.put(`/tasks/${taskId}/submit`, { text, fileUrl });
-    return response.data.task;
+    const task = response.data.task;
+    getSocket()?.emit('task:updated', task);
+    getSocket()?.emit('task:statusChanged', { taskId: task._id, status: task.status, assignedTo: task.assignedTo?._id || task.assignedTo });
+    return task;
   } catch (error) {
     return rejectWithValue(error.response?.data?.message || 'Unable to submit task');
   }
@@ -67,7 +75,10 @@ export const submitTask = createAsyncThunk('tasks/submitTask', async ({ taskId, 
 export const reviewTask = createAsyncThunk('tasks/reviewTask', async ({ taskId, decision, rating, feedback }, { rejectWithValue }) => {
   try {
     const response = await api.put(`/tasks/${taskId}/review`, { decision, rating, feedback });
-    return response.data.task;
+    const task = response.data.task;
+    getSocket()?.emit('task:updated', task);
+    getSocket()?.emit('task:statusChanged', { taskId: task._id, status: task.status, assignedTo: task.assignedTo?._id || task.assignedTo });
+    return task;
   } catch (error) {
     return rejectWithValue(error.response?.data?.message || 'Unable to review task');
   }

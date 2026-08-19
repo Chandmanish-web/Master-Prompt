@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import api from '../api/axios';
+import { getSocket } from '../socket/socket';
 
 const initialState = {
   today: null,
@@ -8,18 +9,43 @@ const initialState = {
   error: null,
 };
 
-export const checkIn = createAsyncThunk('attendance/checkIn', async (_, { rejectWithValue }) => {
+export const checkIn = createAsyncThunk('attendance/checkIn', async (_, { rejectWithValue, getState }) => {
   try {
     const response = await api.post('/attendance/check-in');
+    
+    // Emit real-time event
+    const socket = getSocket();
+    const user = getState().auth.user;
+    if (socket) {
+      socket.emit('attendance:checkin', {
+        userId: user?.id,
+        userName: user?.name,
+        checkInTime: response.data.attendance.checkIn,
+        status: response.data.attendance.status,
+      });
+    }
+    
     return response.data.attendance;
   } catch (error) {
     return rejectWithValue(error.response?.data?.message || 'Unable to check in');
   }
 });
 
-export const checkOut = createAsyncThunk('attendance/checkOut', async (_, { rejectWithValue }) => {
+export const checkOut = createAsyncThunk('attendance/checkOut', async (_, { rejectWithValue, getState }) => {
   try {
     const response = await api.post('/attendance/check-out');
+    
+    // Emit real-time event
+    const socket = getSocket();
+    const user = getState().auth.user;
+    if (socket) {
+      socket.emit('attendance:checkout', {
+        userId: user?.id,
+        userName: user?.name,
+        checkOutTime: response.data.attendance.checkOut,
+      });
+    }
+    
     return response.data.attendance;
   } catch (error) {
     return rejectWithValue(error.response?.data?.message || 'Unable to check out');
