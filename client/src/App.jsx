@@ -24,7 +24,7 @@ import ChatbotWidget from './components/ChatbotWidget';
 
 function App() {
   const dispatch = useDispatch();
-  const { token, loading } = useSelector((state) => state.auth);
+  const { token, isAuthenticated, loading } = useSelector((state) => state.auth);
 
   useEffect(() => {
     if (token || localStorage.getItem('worktrack-auth')) {
@@ -103,7 +103,7 @@ function App() {
           <Route path="*" element={<PageWrapper><LandingPage /></PageWrapper>} />
         </Routes>
       </Suspense>
-      {token && <ChatbotWidget />}
+      {isAuthenticated && <ChatbotWidget />}
     </AnimatePresence>
   );
 }
