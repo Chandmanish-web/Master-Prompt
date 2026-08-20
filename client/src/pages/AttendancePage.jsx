@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Navbar from '../components/Navbar';
-import AttendanceCalendar from '../components/AttendanceCalendar';
+import DynamicCalendar from '../components/DynamicCalendar';
 import { checkIn, checkOut, getAttendanceReport, getTodayAttendance } from '../redux/attendanceSlice';
 import { useNavigate } from 'react-router-dom';
 
@@ -11,7 +11,6 @@ const AttendancePage = () => {
   const { user } = useSelector((state) => state.auth);
   const { today, report, loading, error } = useSelector((state) => state.attendance);
   
-  const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedEmployee, setSelectedEmployee] = useState(null);
 
   // Redirect if not authenticated
@@ -21,20 +20,18 @@ const AttendancePage = () => {
     }
   }, [user, navigate]);
 
-  const monthKey = `${currentMonth.getFullYear()}-${String(currentMonth.getMonth() + 1).padStart(2, '0')}`;
+  const now = new Date();
+  const monthKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
 
   const refreshAttendance = () => {
     dispatch(getTodayAttendance());
     const params = { month: monthKey };
-    if (selectedEmployee) {
-      params.userId = selectedEmployee.id;
-    }
     dispatch(getAttendanceReport(params));
   };
 
   useEffect(() => {
     refreshAttendance();
-  }, [dispatch, currentMonth, selectedEmployee]);
+  }, [dispatch, selectedEmployee]);
 
   const handleCheckIn = async () => {
     const result = await dispatch(checkIn());
@@ -49,14 +46,6 @@ const AttendancePage = () => {
       setTimeout(() => refreshAttendance(), 500);
     }
   };
-
-  const handleMonthChange = (newMonth) => {
-    setCurrentMonth(newMonth);
-  };
-
-  const isToday =
-    currentMonth.getFullYear() === new Date().getFullYear() &&
-    currentMonth.getMonth() === new Date().getMonth();
 
   // Check if user is manager or admin for team view
   const canViewTeam = user?.role === 'manager' || user?.role === 'admin';
@@ -97,17 +86,13 @@ const AttendancePage = () => {
           )}
 
           {/* Calendar */}
-          <AttendanceCalendar
-            records={report}
-            title={selectedEmployee ? 'Team Attendance' : `${user?.name}'s Attendance`}
-            currentMonth={currentMonth}
-            onMonthChange={handleMonthChange}
-            onCheckIn={handleCheckIn}
-            onCheckOut={handleCheckOut}
-            isToday={isToday && !selectedEmployee}
-            todayRecord={today}
-            loading={loading}
-          />
+          <DynamicCalendar title={selectedEmployee ? 'Team work calendar' : `${user?.name}'s work calendar`} />
+          {!selectedEmployee && (
+            <div className="flex gap-3">
+              <button onClick={handleCheckIn} disabled={loading || (today?.checkIn && !today?.checkOut)} className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white disabled:bg-slate-300">Check in</button>
+              <button onClick={handleCheckOut} disabled={loading || !today?.checkIn || today?.checkOut} className="rounded-lg bg-rose-600 px-4 py-2 text-sm font-medium text-white disabled:bg-slate-300">Check out</button>
+            </div>
+          )}
 
           {/* Summary Stats */}
           {!loading && report.length > 0 && (

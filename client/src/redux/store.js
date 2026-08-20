@@ -4,6 +4,8 @@ import chatReducer from './chatSlice';
 import attendanceReducer from './attendanceSlice';
 import taskReducer from './taskSlice';
 import leaveReducer from './leaveSlice';
+import chatbotReducer from './chatbotSlice';
+import calendarReducer from './calendarSlice';
 
 const store = configureStore({
   reducer: {
@@ -12,6 +14,8 @@ const store = configureStore({
     attendance: attendanceReducer,
     tasks: taskReducer,
     leave: leaveReducer,
+    chatbot: chatbotReducer,
+    calendar: calendarReducer,
   },
 });
 

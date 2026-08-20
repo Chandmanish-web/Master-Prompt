@@ -19,6 +19,7 @@ const LeavePage = lazy(() => import('./pages/LeavePage'));
 const TeamPage = lazy(() => import('./pages/TeamPage'));
 import PrivateRoute from './routes/PrivateRoute';
 import { getCurrentUser } from './redux/authSlice';
+import ChatbotWidget from './components/ChatbotWidget';
 
 function App() {
   const dispatch = useDispatch();
@@ -101,6 +102,7 @@ function App() {
           <Route path="*" element={<PageWrapper><LandingPage /></PageWrapper>} />
         </Routes>
       </Suspense>
+      {token && <ChatbotWidget />}
     </AnimatePresence>
   );
 }

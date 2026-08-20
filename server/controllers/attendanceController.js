@@ -25,6 +25,7 @@ exports.checkIn = async (req, res) => {
   try {
     const todayStart = getTodayStart();
     const todayEnd = getTodayEnd();
+    const { location } = req.body;
 
     let attendance = await Attendance.findOne({
       userId: req.user.id,
@@ -34,6 +35,7 @@ exports.checkIn = async (req, res) => {
     if (!attendance) {
       attendance = new Attendance({
         userId: req.user.id,
+        employee: req.user.id,
         date: new Date(),
         status: 'Present',
       });
@@ -45,6 +47,9 @@ exports.checkIn = async (req, res) => {
 
     const checkInTime = new Date();
     attendance.checkIn = checkInTime;
+    attendance.checkInTime = checkInTime;
+    attendance.employee = attendance.employee || req.user.id;
+    attendance.location = location || attendance.location;
     attendance.status = isLate(checkInTime) ? 'Late' : 'Present';
     await attendance.save();
 
@@ -77,6 +82,8 @@ exports.checkOut = async (req, res) => {
     }
 
     attendance.checkOut = new Date();
+    attendance.checkOutTime = attendance.checkOut;
+    attendance.workingHours = Number(((attendance.checkOut - attendance.checkIn) / 3600000).toFixed(2));
     if (attendance.status !== 'Late') {
       attendance.status = 'Present';
     }
@@ -101,6 +108,33 @@ exports.getToday = async (req, res) => {
     res.status(200).json({ success: true, attendance });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message || 'Unable to fetch today attendance' });
+  }
+};
+
+exports.getMyAttendance = exports.getToday;
+
+exports.getAttendanceSummary = async (req, res) => {
+  try {
+    const { month, userId } = req.query;
+    const query = {};
+    if (month) {
+      const [year, monthNumber] = month.split('-').map(Number);
+      query.date = { $gte: new Date(Date.UTC(year, monthNumber - 1, 1)), $lt: new Date(Date.UTC(year, monthNumber, 1)) };
+    }
+    if (req.user.role === 'employee') query.userId = req.user.id;
+    else if (userId) query.userId = userId;
+
+    const records = await Attendance.find(query).select('status workingHours checkIn checkOut checkInTime checkOutTime');
+    const summary = records.reduce((result, record) => {
+      const status = record.status === 'Half-day' ? 'Half-Day' : record.status;
+      result[status] = (result[status] || 0) + 1;
+      result.workingHours = Number((result.workingHours + (record.workingHours || 0)).toFixed(2));
+      return result;
+    }, { Present: 0, Late: 0, Absent: 0, 'Half-Day': 0, workingHours: 0 });
+
+    res.status(200).json({ success: true, summary });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message || 'Unable to fetch attendance summary' });
   }
 };
 
@@ -129,3 +163,5 @@ exports.getReport = async (req, res) => {
     res.status(500).json({ success: false, message: error.message || 'Unable to fetch attendance report' });
   }
 };
+
+exports.getAllAttendance = exports.getReport;

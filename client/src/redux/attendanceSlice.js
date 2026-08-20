@@ -5,6 +5,7 @@ import { getSocket } from '../socket/socket';
 const initialState = {
   today: null,
   report: [],
+  summary: null,
   loading: false,
   error: null,
 };
@@ -73,6 +74,15 @@ export const getAttendanceReport = createAsyncThunk('attendance/getReport', asyn
   }
 });
 
+export const getAttendanceSummary = createAsyncThunk('attendance/getSummary', async ({ userId, month }, { rejectWithValue }) => {
+  try {
+    const response = await api.get('/attendance/summary', { params: { userId, month } });
+    return response.data.summary;
+  } catch (error) {
+    return rejectWithValue(error.response?.data?.message || 'Unable to fetch attendance summary');
+  }
+});
+
 const attendanceSlice = createSlice({
   name: 'attendance',
   initialState,
@@ -126,6 +136,9 @@ const attendanceSlice = createSlice({
       .addCase(getAttendanceReport.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      })
+      .addCase(getAttendanceSummary.fulfilled, (state, action) => {
+        state.summary = action.payload;
       });
   },
 });

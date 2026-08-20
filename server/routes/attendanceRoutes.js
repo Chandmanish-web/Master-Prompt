@@ -1,6 +1,6 @@
 const express = require('express');
 const { query } = require('express-validator');
-const { checkIn, checkOut, getToday, getReport } = require('../controllers/attendanceController');
+const { checkIn, checkOut, getToday, getReport, getMyAttendance, getAllAttendance, getAttendanceSummary } = require('../controllers/attendanceController');
 const { protect } = require('../middleware/authMiddleware');
 const { authorize } = require('../middleware/roleMiddleware');
 const validateRequest = require('../middleware/validateRequest');
@@ -11,6 +11,8 @@ router.use(protect);
 router.post('/check-in', checkIn);
 router.post('/check-out', checkOut);
 router.get('/today', getToday);
+router.get('/mine', getMyAttendance);
+router.get('/summary', getAttendanceSummary);
 
 router.get(
 	'/report',
@@ -33,6 +35,8 @@ router.get(
 	validateRequest,
 	getReport
 	);
+
+router.get('/all', authorize('manager', 'admin'), getAllAttendance);
 
 // Export validators for testing
 const reportValidators = [
