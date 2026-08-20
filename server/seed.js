@@ -6,6 +6,7 @@ const connectDB = require('./config/db');
 const User = require('./models/User');
 const Attendance = require('./models/Attendance');
 const Task = require('./models/Task');
+const Team = require('./models/Team');
 
 const clearCollection = async (collectionName) => {
   try {
@@ -33,6 +34,7 @@ const seed = async () => {
     await clearCollection('attendances');
     await clearCollection('tasks');
     await clearCollection('leaves');
+    await clearCollection('teams');
 
     const admin = await User.create({
       name: 'Admin User',
@@ -61,6 +63,15 @@ const seed = async () => {
 
     const employees = await User.insertMany(employeeData);
 
+    const teams = await Team.create(
+      Array.from({ length: 5 }, (_, index) => ({
+        name: `WorkTrack Team ${index + 1}`,
+        description: `Delivery team ${index + 1} with live task ownership and member visibility.`,
+        manager: manager._id,
+        members: employees.slice(index * 20, (index + 1) * 20).map((employee) => employee._id),
+      }))
+    );
+
     const priorities = ['Low', 'Medium', 'High'];
     const statuses = ['Assigned', 'In Progress', 'Submitted', 'Reviewed'];
     const taskTemplates = [
@@ -72,10 +83,11 @@ const seed = async () => {
     ];
 
     const tasks = await Task.create(
-      employees.map((employee, index) => {
+      employees.slice(0, teams.length).map((employee, index) => {
         const template = taskTemplates[index % taskTemplates.length];
         const status = statuses[index % statuses.length];
         const priority = priorities[index % priorities.length];
+        const team = teams[index % teams.length];
         const deadline = new Date(Date.now() + (3 + (index % 14)) * 24 * 60 * 60 * 1000);
 
         const task = {
@@ -86,6 +98,7 @@ const seed = async () => {
           deadline,
           priority,
           status,
+          teamId: team._id,
         };
 
         if (status === 'Submitted') {
@@ -129,7 +142,7 @@ const seed = async () => {
 
     await Attendance.create(attendanceRecords);
 
-    console.log(`Seeded ${1 + 1 + employees.length} users, ${tasks.length} tasks, ${attendanceRecords.length} attendance records`);
+    console.log(`Seeded ${1 + 1 + employees.length} users, ${teams.length} teams, ${tasks.length} tasks, ${attendanceRecords.length} attendance records`);
   } catch (error) {
     console.error('Seeding failed:', error.message);
     process.exitCode = 1;

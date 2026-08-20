@@ -17,6 +17,7 @@ const Chat = lazy(() => import('./pages/Chat'));
 const TasksPage = lazy(() => import('./pages/TasksPage'));
 const LeavePage = lazy(() => import('./pages/LeavePage'));
 const TeamPage = lazy(() => import('./pages/TeamPage'));
+const TeamsOverview = lazy(() => import('./pages/TeamsOverview'));
 import PrivateRoute from './routes/PrivateRoute';
 import { getCurrentUser } from './redux/authSlice';
 import ChatbotWidget from './components/ChatbotWidget';
@@ -96,7 +97,7 @@ function App() {
             <Route path="/attendance" element={<PageWrapper><AttendancePage /></PageWrapper>} />
             <Route path="/tasks" element={<PageWrapper><TasksPage /></PageWrapper>} />
             <Route path="/leave" element={<PageWrapper><LeavePage /></PageWrapper>} />
-            <Route path="/team" element={<PageWrapper><TeamPage /></PageWrapper>} />
+            <Route path="/team" element={<PageWrapper><TeamsOverview /></PageWrapper>} />
           </Route>
 
           <Route path="*" element={<PageWrapper><LandingPage /></PageWrapper>} />

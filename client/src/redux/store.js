@@ -6,6 +6,7 @@ import taskReducer from './taskSlice';
 import leaveReducer from './leaveSlice';
 import chatbotReducer from './chatbotSlice';
 import calendarReducer from './calendarSlice';
+import teamReducer from './teamSlice';
 
 const store = configureStore({
   reducer: {
@@ -16,6 +17,7 @@ const store = configureStore({
     leave: leaveReducer,
     chatbot: chatbotReducer,
     calendar: calendarReducer,
+    teams: teamReducer,
   },
 });
 

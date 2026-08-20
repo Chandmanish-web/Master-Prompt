@@ -22,6 +22,11 @@ const taskSchema = new mongoose.Schema(
       ref: 'User',
       required: [true, 'Creator is required'],
     },
+    teamId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Team',
+      default: null,
+    },
     deadline: {
       type: Date,
       required: [true, 'Deadline is required'],

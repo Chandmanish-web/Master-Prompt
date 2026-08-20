@@ -20,6 +20,7 @@ const taskRoutes = require('./routes/taskRoutes');
 const leaveRoutes = require('./routes/leaveRoutes');
 const chatbotRoutes = require('./routes/chatbotRoutes');
 const calendarRoutes = require('./routes/calendarRoutes');
+const teamRoutes = require('./routes/teamRoutes');
 
 const { startAbsentJob } = require('./cron/markAbsent');
 
@@ -117,6 +118,7 @@ app.use('/api/tasks', taskRoutes);
 app.use('/api/leaves', leaveRoutes);
 app.use('/api/chatbot', chatbotRoutes);
 app.use('/api/calendar', calendarRoutes);
+app.use('/api/teams', teamRoutes);
 
 // 404 handler
 app.use((req, res) => {

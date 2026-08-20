@@ -1,10 +1,13 @@
 const Task = require('../models/Task');
 const User = require('../models/User');
+const Team = require('../models/Team');
 
 const populateTask = (query) =>
   query
     .populate('assignedTo', 'name email role')
-    .populate('assignedBy', 'name email role');
+    .populate('assignedBy', 'name email role')
+    .populate('teamId', 'name');
+
 
 const canManageTask = (currentUser, targetUser) => {
   if (!targetUser) return false;
@@ -21,7 +24,7 @@ exports.createTask = async (req, res) => {
       return res.status(403).json({ success: false, message: 'Only managers and admins can create tasks' });
     }
 
-    const { title, description, assignedTo, deadline, priority } = req.body;
+    const { title, description, assignedTo, deadline, priority, teamId } = req.body;
 
     if (!title || !assignedTo || !deadline) {
       return res.status(400).json({ success: false, message: 'Title, assignee, and deadline are required' });
@@ -36,6 +39,11 @@ exports.createTask = async (req, res) => {
       return res.status(403).json({ success: false, message: 'You can only assign tasks to your team members' });
     }
 
+    if (teamId) {
+      const team = await Team.findOne({ _id: teamId, members: assignedTo });
+      if (!team) return res.status(400).json({ success: false, message: 'Assignee must belong to the selected team' });
+    }
+
     const task = await Task.create({
       title,
       description: description || '',
@@ -44,6 +52,7 @@ exports.createTask = async (req, res) => {
       deadline,
       priority: priority || 'Medium',
       status: 'Assigned',
+      teamId: teamId || null,
     });
 
     const populatedTask = await populateTask(Task.findById(task._id));
