@@ -1,4 +1,9 @@
 {
+  "scripts": {
+    "seed": "npm --prefix server run seed",
+    "check-mongo": "npm --prefix server run check-mongo",
+    "test": "npm --prefix server test"
+  },
   "dependencies": {
     "socket.io": "^4.8.3",
     "socket.io-client": "^4.8.3"
